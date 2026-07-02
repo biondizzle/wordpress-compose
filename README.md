@@ -134,6 +134,28 @@ docker compose logs -f wordpress
 docker compose down
 ```
 
+## Systemd Service (Survives Reboots)
+
+Install the included `wordpress-compose.service` so the stack starts on boot:
+
+```bash
+# Copy the project to /opt (or wherever you want it)
+sudo cp -r wordpress-compose /opt/wordpress-compose
+
+# Install the systemd unit
+sudo cp /opt/wordpress-compose/wordpress-compose.service /etc/systemd/system/
+
+# Update the WorkingDirectory in the service file if your project isn't in /opt/wordpress-compose
+
+# Enable and start
+sudo systemctl daemon-reload
+sudo systemctl enable wordpress-compose
+sudo systemctl start wordpress-compose
+
+# Check status
+sudo systemctl status wordpress-compose
+```
+
 ## Persistent Data
 
 All data persists in `./data/` (gitignored):
