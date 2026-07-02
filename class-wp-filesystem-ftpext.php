@@ -605,6 +605,10 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 		}
 
 		if ( ! ftp_mkdir( $this->link, $path ) ) {
+			// Directory may already exist — that's OK
+			if ( $this->is_dir( $path ) ) {
+				return true;
+			}
 			return false;
 		}
 
