@@ -1,6 +1,9 @@
 # Tarballs — download fresh copies per the README
 *.tar.gz
 
+# Environment file (contains secrets)
+.env
+
 # Persistent data volumes
 data/
 

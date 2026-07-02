@@ -106,7 +106,7 @@ docker build -t wordpress-frankenphp .
 If you don't want to build from source, a pre-built image is available:
 
 ```bash
-docker pull ewr.vultrcr.com/chansey/wordpress-compose:latest
+docker pull ord.vultrcr.com/deepdish/wordpress-compose:latest
 ```
 
 Update `docker-compose.yaml` to use the pre-built image instead of building:
@@ -114,7 +114,7 @@ Update `docker-compose.yaml` to use the pre-built image instead of building:
 ```yaml
 services:
   wordpress:
-    image: ewr.vultrcr.com/chansey/wordpress-compose:latest
+    image: ord.vultrcr.com/deepdish/wordpress-compose:latest
     # remove the "build:" section
 ```
 

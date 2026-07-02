@@ -1,19 +1,34 @@
 services:
   wordpress:
-    build:
-      context: .
+    image: ord.vultrcr.com/deepdish/wordpress-compose:latest
     container_name: wordpress
     restart: always
     ports:
-      - "8001:80"
-      - "8445:443"
-      - "8445:443/udp"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     environment:
-      - SERVER_NAME=:80
+      - SERVER_NAME=${WORDPRESS_DOMAIN:-localhost}
       - WORDPRESS_DB_NAME=wordpress
       - WORDPRESS_DB_USER=wordpress
-      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_PASSWORD=${DB_PASSWORD:-wordpress}
       - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_URL=${WORDPRESS_URL:-http://localhost}
+      - WORDPRESS_TABLE_PREFIX=wp_
+      - WP_DEBUG=false
+      # WordPress salts — generate at https://api.wordpress.org/secret-key/1.1/salt/
+      - AUTH_KEY=${AUTH_KEY}
+      - SECURE_AUTH_KEY=${SECURE_AUTH_KEY}
+      - LOGGED_IN_KEY=${LOGGED_IN_KEY}
+      - NONCE_KEY=${NONCE_KEY}
+      - AUTH_SALT=${AUTH_SALT}
+      - SECURE_AUTH_SALT=${SECURE_AUTH_SALT}
+      - LOGGED_IN_SALT=${LOGGED_IN_SALT}
+      - NONCE_SALT=${NONCE_SALT}
+      # FTP server creds (internal, must match ftpserver.json)
+      - FTP_HOST=127.0.0.1:2121
+      - FTP_USER=${FTP_USER:-wordpress}
+      - FTP_PASS=${FTP_PASS:-wordpress}
     volumes:
       - ./data/wp-content:/app/wp-content
       - ./data/caddy:/data
@@ -34,10 +49,10 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
     environment:
-      - MYSQL_ROOT_PASSWORD=wordpress_root
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-wordpress_root}
       - MYSQL_DATABASE=wordpress
       - MYSQL_USER=wordpress
-      - MYSQL_PASSWORD=wordpress
+      - MYSQL_PASSWORD=${DB_PASSWORD:-wordpress}
     volumes:
       - ./data/mysql:/var/lib/mysql
     networks:

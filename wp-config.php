@@ -1,9 +1,10 @@
 <?php
 /**
- * WordPress configuration with FTP support for frankenphp
+ * WordPress configuration — fully environment-driven
+ * All settings come from docker-compose environment variables
  */
 
-// ** Database settings — override via environment variables in docker-compose ** //
+// ** Database ** //
 define( 'DB_NAME',     getenv('WORDPRESS_DB_NAME')     ?: 'wordpress' );
 define( 'DB_USER',     getenv('WORDPRESS_DB_USER')     ?: 'wordpress' );
 define( 'DB_PASSWORD', getenv('WORDPRESS_DB_PASSWORD') ?: 'wordpress' );
@@ -14,33 +15,36 @@ define( 'DB_COLLATE', '' );
 /**#@+
  * Authentication unique keys and salts.
  */
-define( 'AUTH_KEY',         'x9kL2mP7vQwR4tYz1aB3cD5eF8gH0jK2' );
-define( 'SECURE_AUTH_KEY',  'mN4pQ7rS0tU2vW4xY6zA8cB0dE2fG4h' );
-define( 'LOGGED_IN_KEY',    'J6kL8mN0pQ2rS4tU6vW8xY0zA2bC4dE' );
-define( 'NONCE_KEY',        'f6G8hJ0kL2mN4pQ6rS8tU0vW2xY4zA6b' );
-define( 'AUTH_SALT',        'c8D0eF2gH4jK6mL8mN0pQ2rS4tU6vW8x' );
-define( 'SECURE_AUTH_SALT', 'Y0zA2bC4dE6fG8hJ0kL2mN4pQ6rS8tU0' );
-define( 'LOGGED_IN_SALT',   'v2W4xY6zA8bC0dE2fG4hJ6kL8mN0pQ2r' );
-define( 'NONCE_SALT',       'S4tU6vW8xY0zA2bC4dE6fG8hJ0kL2mN4p' );
+define( 'AUTH_KEY',         getenv('AUTH_KEY')         ?: 'change-me-1' );
+define( 'SECURE_AUTH_KEY',  getenv('SECURE_AUTH_KEY')  ?: 'change-me-2' );
+define( 'LOGGED_IN_KEY',    getenv('LOGGED_IN_KEY')    ?: 'change-me-3' );
+define( 'NONCE_KEY',        getenv('NONCE_KEY')        ?: 'change-me-4' );
+define( 'AUTH_SALT',        getenv('AUTH_SALT')        ?: 'change-me-5' );
+define( 'SECURE_AUTH_SALT', getenv('SECURE_AUTH_SALT') ?: 'change-me-6' );
+define( 'LOGGED_IN_SALT',   getenv('LOGGED_IN_SALT')   ?: 'change-me-7' );
+define( 'NONCE_SALT',       getenv('NONCE_SALT')       ?: 'change-me-8' );
 
 /**#@-*/
 
-$table_prefix = 'wp_';
+$table_prefix = getenv('WORDPRESS_TABLE_PREFIX') ?: 'wp_';
 
-define( 'WP_DEBUG', false );
+define( 'WP_DEBUG', filter_var(getenv('WP_DEBUG') ?: 'false', FILTER_VALIDATE_BOOLEAN) );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
+// WordPress URL — set via WORDPRESS_URL env var (e.g. https://thelittlecici.com)
+$wp_url = getenv('WORDPRESS_URL');
+if ( $wp_url ) {
+    define( 'WP_HOME',  $wp_url );
+    define( 'WP_SITEURL', $wp_url );
+}
+
 // Force WordPress to use the FTP extension
 define('FS_METHOD', 'ftpext');
-
-// Absolute path to the WordPress root installation directory
 define('FTP_BASE', '/app/');
-
-// FTP server connection details (localhost — ftpserver running in same container via supervisor)
-define('FTP_HOST', '127.0.0.1:2121');
-define('FTP_USER', 'wordpress');
-define('FTP_PASS', 'wordpress');
+define('FTP_HOST', getenv('FTP_HOST') ?: '127.0.0.1:2121');
+define('FTP_USER', getenv('FTP_USER') ?: 'wordpress');
+define('FTP_PASS', getenv('FTP_PASS') ?: 'wordpress');
 
 /* That's all, stop editing! Happy publishing. */
 
