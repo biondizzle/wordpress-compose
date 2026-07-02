@@ -594,6 +594,16 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 			return false;
 		}
 
+		// Translate filesystem path to FTP-relative path
+		// WordPress passes absolute filesystem paths (e.g. /app/wp-content/foo)
+		// but the FTP server's root maps to /app, so we need /wp-content/foo
+		if ( defined( 'FTP_BASE' ) && FTP_BASE && FTP_BASE !== '/' ) {
+			$base = trailingslashit( FTP_BASE );
+			if ( strpos( $path, $base ) === 0 ) {
+				$path = '/' . substr( $path, strlen( $base ) );
+			}
+		}
+
 		if ( ! ftp_mkdir( $this->link, $path ) ) {
 			return false;
 		}
