@@ -5,9 +5,9 @@ services:
     container_name: wordpress
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "8001:80"
+      - "8445:443"
+      - "8445:443/udp"
     environment:
       - SERVER_NAME=:80
       - WORDPRESS_DB_NAME=wordpress

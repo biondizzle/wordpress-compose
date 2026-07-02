@@ -1,0 +1,11 @@
+# Tarballs — download fresh copies per the README
+*.tar.gz
+
+# Persistent data volumes
+data/
+
+# OS/editor cruft
+.DS_Store
+*.swp
+*.swo
+*~
