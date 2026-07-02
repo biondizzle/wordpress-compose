@@ -1,0 +1,24 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+	servers {
+		enable_full_duplex
+	}
+	frankenphp {
+		max_threads auto
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+{$SERVER_NAME:localhost} {
+	root * /app
+	encode zstd br gzip
+
+	# FrankenPHP's php_server handles:
+	# 1. Static file serving (CSS, JS, images)
+	# 2. Direct PHP file execution (wp-admin/*.php, wp-login.php, etc.)
+	# 3. Fallback to index.php for pretty permalinks (/my-post/ -> /index.php)
+	# No manual rewrite rules needed — php_server does it all
+	php_server
+}

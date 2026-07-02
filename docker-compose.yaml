@@ -1,0 +1,54 @@
+services:
+  wordpress:
+    build:
+      context: .
+    container_name: wordpress
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      - SERVER_NAME=:80
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_HOST=db:3306
+    volumes:
+      - ./data/wp-content:/app/wp-content
+      - ./data/caddy:/data
+      - ./data/caddy-config:/config
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - wordpress
+
+  db:
+    image: mariadb:11
+    container_name: wordpress-db
+    restart: always
+    command: >-
+      --max-connections=200
+      --innodb-buffer-pool-size=1G
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    environment:
+      - MYSQL_ROOT_PASSWORD=wordpress_root
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      - wordpress
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  wordpress:
+    driver: bridge
