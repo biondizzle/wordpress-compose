@@ -39,9 +39,8 @@ if ( $wp_url ) {
     define( 'WP_SITEURL', $wp_url );
 }
 
-// Use 'direct' for filesystem operations — the container's www-data owns /app/wp-content
-// FTP creds are available as fallback for installs/updates if direct doesn't work
-define('FS_METHOD', 'direct');
+// Force WordPress to use the FTP extension
+define('FS_METHOD', 'ftpext');
 define('FTP_BASE', '/');
 define('FTP_HOST', getenv('FTP_HOST') ?: '127.0.0.1:2121');
 define('FTP_USER', getenv('FTP_USER') ?: 'wordpress');

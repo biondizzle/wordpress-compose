@@ -55,6 +55,10 @@ RUN mkdir -p /app/wp-content/uploads /app/wp-content/upgrade /app/wp-content/cac
 COPY ./wp-config.php /app/wp-config.php
 RUN chown www-data:www-data /app/wp-config.php
 
+# Patch WP_Filesystem_FTPext to read FTP constants from wp-config.php when called with no args
+COPY ./patch-ftpext.py /tmp/patch-ftpext.py
+RUN python3 /tmp/patch-ftpext.py && rm /tmp/patch-ftpext.py
+
 # Copy the compiled FTP server binary from the Go builder
 COPY --from=ftp-builder /usr/local/bin/ftpserver /usr/local/bin/ftpserver
 
