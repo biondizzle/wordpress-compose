@@ -30,9 +30,7 @@ services:
       - FTP_USER=${FTP_USER:-wordpress}
       - FTP_PASS=${FTP_PASS:-wordpress}
     volumes:
-      - ./data/wp-content/uploads:/app/wp-content/uploads
-      - ./data/wp-content/upgrade:/app/wp-content/upgrade
-      - ./data/wp-content/cache:/app/wp-content/cache
+      - ./data/wp-content:/app/wp-content
       - ./data/caddy:/data
       - ./data/caddy-config:/config
     depends_on:
