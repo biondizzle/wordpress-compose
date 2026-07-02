@@ -41,7 +41,7 @@ if ( $wp_url ) {
 
 // Force WordPress to use the FTP extension
 define('FS_METHOD', 'ftpext');
-define('FTP_BASE', '/app/');
+define('FTP_BASE', '/');
 define('FTP_HOST', getenv('FTP_HOST') ?: '127.0.0.1:2121');
 define('FTP_USER', getenv('FTP_USER') ?: 'wordpress');
 define('FTP_PASS', getenv('FTP_PASS') ?: 'wordpress');
