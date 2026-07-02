@@ -93,6 +93,26 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 	}
 
 	/**
+	 * Translates a filesystem path to an FTP-relative path.
+	 *
+	 * The FTP server's basePath maps to FTP_BASE (e.g. /app), so
+	 * /app/wp-content/foo becomes /wp-content/foo on FTP.
+	 *
+	 * @since 7.0-patched
+	 * @param string $path Filesystem path to translate.
+	 * @return string Translated FTP-relative path.
+	 */
+	protected function translate_path( $path ) {
+		if ( defined( 'FTP_BASE' ) && FTP_BASE && FTP_BASE !== '/' ) {
+			$base = trailingslashit( FTP_BASE );
+			if ( strpos( $path, $base ) === 0 ) {
+				$path = '/' . substr( $path, strlen( $base ) );
+			}
+		}
+		return $path;
+	}
+
+	/**
 	 * Connects filesystem.
 	 *
 	 * @since 2.5.0
@@ -225,6 +245,9 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 		}
 
 		fseek( $temphandle, 0 ); // Skip back to the start of the file being written to.
+
+		// Translate filesystem path to FTP-relative path
+		$file = $this->translate_path( $file );
 
 		$ret = ftp_fput( $this->link, $file, $temphandle, FTP_BINARY );
 
@@ -595,16 +618,9 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 		}
 
 		// Translate filesystem path to FTP-relative path
-		// WordPress passes absolute filesystem paths (e.g. /app/wp-content/foo)
-		// but the FTP server's root maps to /app, so we need /wp-content/foo
-		if ( defined( 'FTP_BASE' ) && FTP_BASE && FTP_BASE !== '/' ) {
-			$base = trailingslashit( FTP_BASE );
-			if ( strpos( $path, $base ) === 0 ) {
-				$path = '/' . substr( $path, strlen( $base ) );
-			}
-		}
+		$path = $this->translate_path( $path );
 
-		if ( ! ftp_mkdir( $this->link, $path ) ) {
+		if ( ! @ftp_mkdir( $this->link, $path ) ) {
 			// Directory may already exist — that's OK
 			if ( $this->is_dir( $path ) ) {
 				return true;
